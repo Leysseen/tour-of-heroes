@@ -21,6 +21,7 @@ export class HeroService {
   constructor(private messageService: MessageService, private http: HttpClient) { }
 
   getHeroes(): Observable<Hero[]> {
+    this.messageService.clear();
     return this.http.get<Hero[]>(this.heroesUrl)
       .pipe(
         tap(_ => this.log('Récupération des héros')),
@@ -31,6 +32,7 @@ export class HeroService {
   /** GET hero by id. Will 404 if id not found */
   getHero(id: number): Observable<Hero> {
     const url = `${this.heroesUrl}/${id}`;
+    this.messageService.clear();
     return this.http.get<Hero>(url).pipe(
       tap(_ => this.log(`affichage du héro id=${id}`)),
       catchError(this.handleError<Hero>(`getHero id=${id}`))
@@ -39,6 +41,7 @@ export class HeroService {
 
   /** PUT: update the hero on the server */
   updateHero(hero: Hero): Observable<any> {
+    this.messageService.clear();
     return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
       tap(_ => this.log(`updated hero id=${hero.id}`)),
       catchError(this.handleError<any>('updateHero'))
@@ -46,6 +49,7 @@ export class HeroService {
   }
 
   addHero(hero: Hero): Observable<Hero> {
+    this.messageService.clear();
     return this.http.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
       tap((newHero: Hero) => this.log(`ajout du héros w/ id=${newHero.id}`)),
       catchError(this.handleError<Hero>('pb addHero'))
@@ -53,6 +57,7 @@ export class HeroService {
   }
 
   deleteHero(hero: Hero): Observable<Hero> {
+    this.messageService.clear();
     const id = typeof hero === 'number' ? hero : hero.id;
     const url = `${this.heroesUrl}/${id}`;
 
@@ -68,6 +73,7 @@ export class HeroService {
       // if not search term, return empty hero array.
       return of([]);
     }
+    this.messageService.clear();
     return this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
       tap(_ => this.log(`trouvé le(s) héros correspondant "${term}"`)),
       catchError(this.handleError<Hero[]>('searchHeroes', []))
